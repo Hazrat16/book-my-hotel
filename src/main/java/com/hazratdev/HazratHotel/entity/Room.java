@@ -20,7 +20,7 @@ public class Room {
 
     private String roomType;
 
-    private BigDecimal price;
+    private BigDecimal roomPrice;
 
     private String roomDescription;
 
@@ -35,7 +35,7 @@ public class Room {
         return "Room{" +
                 "id=" + id +
                 ", roomType='" + roomType + '\'' +
-                ", price=" + price +
+                ", price=" + roomPrice +
                 ", roomDescription='" + roomDescription + '\'' +
                 ", roomPhotoUrl='" + roomPhotoUrl + '\'' +
                 ", bookings=" + bookings +
