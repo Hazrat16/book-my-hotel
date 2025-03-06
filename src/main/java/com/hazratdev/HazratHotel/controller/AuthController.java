@@ -3,7 +3,7 @@ package com.hazratdev.HazratHotel.controller;
 import com.hazratdev.HazratHotel.dto.LoginRequest;
 import com.hazratdev.HazratHotel.dto.Response;
 import com.hazratdev.HazratHotel.entity.User;
-import com.hazratdev.HazratHotel.service.IUserService;
+import com.hazratdev.HazratHotel.service.interfac.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

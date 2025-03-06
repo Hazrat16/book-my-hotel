@@ -1,4 +1,4 @@
-package com.hazratdev.HazratHotel.service;
+package com.hazratdev.HazratHotel.service.interfac;
 
 import com.hazratdev.HazratHotel.dto.LoginRequest;
 import com.hazratdev.HazratHotel.dto.Response;

@@ -6,7 +6,7 @@ import com.hazratdev.HazratHotel.dto.UserDTO;
 import com.hazratdev.HazratHotel.entity.User;
 import com.hazratdev.HazratHotel.exception.OurException;
 import com.hazratdev.HazratHotel.repo.UserRepository;
-import com.hazratdev.HazratHotel.service.IUserService;
+import com.hazratdev.HazratHotel.service.interfac.IUserService;
 import com.hazratdev.HazratHotel.utils.JWTUtils;
 import com.hazratdev.HazratHotel.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
