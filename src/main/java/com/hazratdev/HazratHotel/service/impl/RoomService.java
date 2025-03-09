@@ -13,6 +13,7 @@ import jdk.jshell.execution.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
@@ -103,45 +104,111 @@ public class RoomService implements IRoomService {
     @Override
     public Response updateRoom(Long roomId, String description, String roomType, BigDecimal roomPrice, MultipartFile photo) {
         Response response = new Response();
-        try {
-            String imageUrl = null;
 
-            if(photo != null && !photo.isEmpty()) {
-                imageUrl = awsS3Service.saveImageToS3(photo);
+        try {
+            if (roomId == null) {
+                throw new OurException("Room ID is required");
             }
-            Room room = roomRepository.findById(roomId).orElseThrow(() -> new OurException("Room not found"));
-            if(roomType != null) room.setRoomType(roomType);
-            if(roomPrice != null) room.setRoomPrice(roomPrice);
-            if(imageUrl != null) room.setRoomPhotoUrl(imageUrl);
-            if(description != null) room.setRoomDescription(description);
+
+            Room room = roomRepository.findById(roomId)
+                    .orElseThrow(() -> new OurException("Room not found"));
+
+            if (StringUtils.hasText(roomType)) {
+                room.setRoomType(roomType);
+            }
+
+            if (roomPrice != null) {
+                room.setRoomPrice(roomPrice);
+            }
+
+            if (StringUtils.hasText(description)) {
+                room.setRoomDescription(description);
+            }
+
+            if (photo != null && !photo.isEmpty()) {
+                String imageUrl = awsS3Service.saveImageToS3(photo);
+                room.setRoomPhotoUrl(imageUrl);
+            }
+
             Room updatedRoom = roomRepository.save(room);
             RoomDTO roomDTO = Utils.mapRoomEntityToRoomDTO(updatedRoom);
+
             response.setStatusCode(200);
             response.setMessage("Room updated successfully");
             response.setRoom(roomDTO);
 
+        } catch (OurException e) {
+            response.setStatusCode(400);
+            response.setMessage(e.getMessage());
+        } catch (Exception e) {
+            response.setStatusCode(500);
+            response.setMessage("An unexpected error occurred");
+        }
+
+        return response;
+    }
+
+
+    @Override
+    public Response getRoomById(Long roomId) {
+        Response response = new Response();
+
+        try {
+           Room room = roomRepository .findById(roomId).orElseThrow(() -> new OurException("Room not found"));
+           RoomDTO roomDTO = Utils.mapRoomEntityToRoomDTO(room);
+           response.setStatusCode(200);
+           response.setMessage("Room found");
+           response.setRoom(roomDTO);
         }catch (OurException e){
             response.setStatusCode(400);
             response.setMessage(e.getMessage());
+        }catch (Exception e){
+            response.setStatusCode(500);
+            response.setMessage(e.getMessage());
 
         }
-
 
         return response;
     }
 
     @Override
-    public Response getRoomById(Long roomId) {
-        return null;
-    }
-
-    @Override
     public Response getAvailableRoomByDateAndType(LocalDate checkInDate, LocalDate checkOutDate, String roomType) {
-        return null;
+        Response response = new Response();
+
+        try {
+            List<Room> roomList = roomRepository.findAvailableRoomByDatesAndTypes(checkInDate, checkOutDate, roomType);
+            List<RoomDTO> roomDTOList = Utils.mapRoomListEntityToRoomListDTO(roomList);
+            response.setStatusCode(200);
+            response.setMessage("Available rooms found");
+            response.setRoomList(roomDTOList);
+        }catch (OurException e){
+            response.setStatusCode(400);
+            response.setMessage(e.getMessage());
+
+        }catch (Exception e){
+            response.setStatusCode(500);
+            response.setMessage(e.getMessage());
+        }
+        return response;
     }
 
     @Override
     public Response getAvailableRooms() {
-        return null;
+        Response response = new Response();
+        try {
+            List<Room> room = roomRepository.getAvailableRooms();
+            List<RoomDTO> roomDTOList = Utils.mapRoomListEntityToRoomListDTO(room);
+            response.setStatusCode(200);
+            response.setMessage("Available rooms found");
+            response.setRoomList(roomDTOList);
+
+        }catch (OurException e){
+            response.setStatusCode(400);
+            response.setMessage(e.getMessage());
+        }catch (Exception e){
+            response.setStatusCode(500);
+            response.setMessage(e.getMessage());
+        }
+        return response;
     }
 }
