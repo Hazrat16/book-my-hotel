@@ -79,6 +79,9 @@ public class RoomService implements IRoomService {
         }catch (OurException e){
             response.setStatusCode(400);
             response.setMessage(e.getMessage());
+        }catch (Exception e){
+            response.setStatusCode(500);
+            response.setMessage(e.getMessage());
         }
 
         return response;
@@ -95,6 +98,9 @@ public class RoomService implements IRoomService {
 
         }catch (OurException e){
             response.setStatusCode(400);
+            response.setMessage(e.getMessage());
+        }catch (Exception e){
+            response.setStatusCode(500);
             response.setMessage(e.getMessage());
         }
 
